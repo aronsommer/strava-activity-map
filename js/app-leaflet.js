@@ -142,7 +142,7 @@ for (i in activities) {
             layer.setStyle({
                 color: 'blue',
                 //opacity: 1,
-                //weight: 5
+                weight: 5
             });
             var popup = L.popup()
             .setLatLng(e.latlng)
@@ -155,7 +155,7 @@ for (i in activities) {
             layer.setStyle({
                 color: '#FF00FF',
                 //opacity: 1,
-                //weight: 5
+                weight: 3
             });
             map.closePopup();
         });
