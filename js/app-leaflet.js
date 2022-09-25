@@ -134,10 +134,12 @@ for (i in activities) {
         }
 
         // add line from toUnion array points to map with some basic styling
-        var polyLine = L.polyline(coords,{color:lineColour,opacity:1,weight:3,interactive:true}).addTo(map).bringToBack();
+        // var polyLine = L.polyline(coords,{color:lineColour,opacity:1,weight:3,interactive:true}).addTo(map).bringToBack();
+        var polyLine = L.polyline(coords,{color:lineColour,opacity:1,weight:3,interactive:true}).addTo(map);
 
         // highlight line on mouseover and show popup
         polyLine.on('mouseover', function(e) {
+            this.bringToFront();
             var layer = e.target;
             layer.setStyle({
                 color: 'blue',
@@ -151,6 +153,7 @@ for (i in activities) {
         });
 
         polyLine.on('mouseout', function(e) {
+            this.bringToBack();
             var layer = e.target;
             layer.setStyle({
                 color: '#FF00FF',
@@ -162,6 +165,7 @@ for (i in activities) {
 
         // open strava activity on click
         polyLine.on('click', function(e) {
+            this.bringToFront();
             // Do whatever you want here, when the polygon is clicked.
             var url = "https://www.strava.com/activities/"+data.id
             //console.log(url);
