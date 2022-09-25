@@ -159,6 +159,14 @@ for (i in activities) {
             });
             map.closePopup();
         });
+
+        // open strava activity on click
+        polyLine.on('click', function(e) {
+            // Do whatever you want here, when the polygon is clicked.
+            var url = "https://www.strava.com/activities/"+data.id
+            //console.log(url);
+            window.open(url);
+        });
     }
 }
 $('#floating-text').css('display','none');
