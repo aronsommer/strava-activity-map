@@ -134,7 +134,26 @@ for (i in activities) {
         }
 
         // add line from toUnion array points to map with some basic styling
-        L.polyline(coords,{color:lineColour,opacity:0.9,weight:3,interactive:false}).addTo(map).bringToBack();
+        var polyLine = L.polyline(coords,{color:lineColour,opacity:0.9,weight:3,interactive:true}).addTo(map).bringToBack();
+
+        // highlight line on mouseover
+        polyLine.on('mouseover', function(e) {
+            var layer = e.target;
+            layer.setStyle({
+                color: 'blue',
+                //opacity: 1,
+                //weight: 5
+            });
+        });
+
+        polyLine.on('mouseout', function(e) {
+            var layer = e.target;
+            layer.setStyle({
+                color: '#FF00FF',
+                //opacity: 1,
+                //weight: 5
+            });
+        });
     }
 }
 $('#floating-text').css('display','none');
