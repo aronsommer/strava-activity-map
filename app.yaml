@@ -1,0 +1,5 @@
+runtime: nodejs16 # or another supported version
+
+env_variables:
+  STRAVA_CLIENT_ID: "92180"
+  STRAVA_CLIENT_SECRET: "548c3e8dbfec4eac3ee1e40c70567a84e756c872"
