@@ -136,7 +136,7 @@ for (i in activities) {
         // add line from toUnion array points to map with some basic styling
         var polyLine = L.polyline(coords,{color:lineColour,opacity:0.9,weight:3,interactive:true}).addTo(map).bringToBack();
 
-        // highlight line on mouseover
+        // highlight line on mouseover and show popup
         polyLine.on('mouseover', function(e) {
             var layer = e.target;
             layer.setStyle({
@@ -144,6 +144,10 @@ for (i in activities) {
                 //opacity: 1,
                 //weight: 5
             });
+            var popup = L.popup()
+            .setLatLng(e.latlng)
+            .setContent(data.name)
+            .openOn(map);
         });
 
         polyLine.on('mouseout', function(e) {
@@ -153,6 +157,7 @@ for (i in activities) {
                 //opacity: 1,
                 //weight: 5
             });
+            map.closePopup();
         });
     }
 }
