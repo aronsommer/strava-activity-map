@@ -113,6 +113,22 @@ var getListOfActivities = function(allActivities, timeStamp, perPage, page) {
 var displayActivities = function(activities) {
 for (i in activities) {
     let data = activities[i];
+
+    // activityinfo
+    let nametext = '';
+    if(data.name){
+    nametext = data.name;
+    }
+    let typetext = '';
+    if(data.type){
+    typetext = data.type;
+    }
+    let distancetext = '';
+    if(data.type){
+    distancetext = Math.round(data.distance/1000)+" km";
+    }
+    let activityinfo = nametext+"<br><hr>"+typetext+" "+distancetext;
+
     if (data.map.coordinates ) {
 
         var lineColour = "#FF00FF"; //magenta
@@ -147,7 +163,7 @@ for (i in activities) {
             });
             var popup = L.popup()
             .setLatLng(e.latlng)
-            .setContent(data.name)
+            .setContent(activityinfo)
             .openOn(map);
         });
 
