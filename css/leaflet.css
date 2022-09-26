@@ -508,6 +508,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	box-shadow: 0 3px 14px rgba(0,0,0,0.4);
 	}
 .leaflet-container a.leaflet-popup-close-button {
+	display: none;
 	position: absolute;
 	top: 0;
 	right: 0;
@@ -520,7 +521,7 @@ svg.leaflet-image-layer.leaflet-interactive path {
 	color: #c3c3c3;
 	text-decoration: none;
 	font-weight: bold;
-	background: transparent;
+	background: transparent;	
 	}
 .leaflet-container a.leaflet-popup-close-button:hover {
 	color: #999;
