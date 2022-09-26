@@ -111,9 +111,8 @@ var getListOfActivities = function(allActivities, timeStamp, perPage, page) {
 }
 
 var displayActivities = function(activities) {
-var data = {};
 for (i in activities) {
-    data = activities[i];
+    let data = activities[i];
     if (data.map.coordinates ) {
 
         var lineColour = "#FF00FF"; //magenta
