@@ -1,10 +1,9 @@
 # strava-activity-map
 
 A web app that loads all activities from a user's Strava account and displays them in a Leaflet app.
-
 Based on this repo: https://github.com/nsynes/ActivityMap
 
-**For Google Cloud set environmental variables (.env file) with an app.yaml file in repo**
+For Google Cloud set environmental variables (.env file) with an app.yaml file in repo
 
 How to deploy your Node.js app to Google Google Cloud:
 1. Create a Project in Google Cloud
