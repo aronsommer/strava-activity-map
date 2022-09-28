@@ -1,6 +1,6 @@
 {
-  "name": "activity-map",
-  "main": "activity-map-app.js",
+  "name": "strava-activity-map",
+  "main": "app.js",
   "version": "0.0.0",
   "dependencies": {
     "cookie-parser": "^1.4.4",
@@ -15,6 +15,6 @@
     "strava-v3": "^1.14.0"
   },
   "scripts": {
-    "start": "node activity-map-app.js"
+    "start": "node app.js"
   }
 }
