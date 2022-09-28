@@ -21,6 +21,7 @@ body, #map {
     z-index:100;
     bottom:20px;
     display:none;
+    font-family: Arial, Helvetica, sans-serif;
 }
 #header {
     top: 0;
@@ -35,7 +36,8 @@ body, #map {
 #logout-button {
     margin: 0.1em 0;
     right: 0;
-    font: bold 14px "Lucida Console", Monaco, monospace;
+    /* font: bold 14px "Lucida Console", Monaco, monospace; */
+    font-family: Arial, Helvetica, sans-serif;
     border: 2px solid rgba(0,0,0,0.2);
     border-radius: 4px;
     background-color:white;

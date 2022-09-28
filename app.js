@@ -99,12 +99,16 @@ app.get('/auth/strava/callback',
 app.get('/logout', function(req, res){
   req.logout();
   res.cookie("connect.sid", "", { expires: new Date() });
-  res.render('login', { user: req.user });
+  // res.render('login', { user: req.user });
+  // Go to connect-strava.html if user logs out
+  // pagePath = path.join(__dirname, '/connect-strava.html');
+  // res.sendFile(pagePath);
+  res.redirect('/');
 });
 
-app.get('/login', function(req, res){
-    res.render('login', { user: req.user });
-  });
+// app.get('/login', function(req, res){
+// res.render('login', { user: req.user });
+// });
 
 app.get('/listActivities', ensureAuthenticated, (req, res) => {
 
