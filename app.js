@@ -34,6 +34,9 @@ app.use('/fontawesome', express.static(path.join(__dirname, 'fontawesome')));
 app.use('/js', express.static(path.join(__dirname, 'js')));
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
+// You have to serve your static files from express
+// public is the folder where your images and everything (assets) reside
+app.use(express.static('public'));
 
 // Passport session setup.
 passport.serializeUser(function(user, done) { done(null, user) });
