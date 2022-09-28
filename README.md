@@ -2,6 +2,8 @@
 
 A web app that loads all activities from a user's Strava account and displays them in a Leaflet app.
 
+https://strava-activity-map.oa.r.appspot.com/
+
 Based on this repo: https://github.com/nsynes/ActivityMap
 
 How to deploy your Node.js app to Google Google Cloud:
