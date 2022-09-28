@@ -103,6 +103,7 @@ app.get('/logout', function(req, res){
   // Go to connect-strava.html if user logs out
   // pagePath = path.join(__dirname, '/connect-strava.html');
   // res.sendFile(pagePath);
+  // Better redirect to homepage (it will than go to connect-strava.html automatically)
   res.redirect('/');
 });
 
