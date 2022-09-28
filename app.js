@@ -16,7 +16,6 @@ dotenv.config();
 const port = process.env.PORT || 3000
 const app = express();
 
-
 // configure Express
 //app.use(express.logger());
 app.use(cookieParser());
@@ -57,6 +56,9 @@ passport.use(new StravaStrategy({
   }
 ));
 
+// If user visits homepage ensureAuthenticated() function gets called
+// If user is authenticated than it goes to index.html
+// If user is NOT authenticated than it goes to connect-strava.html in ensureAuthenticated() function
 app.get('/', ensureAuthenticated, function(req, res){
     pagePath = path.join(__dirname, '/index.html');
     res.sendFile(pagePath);
@@ -150,11 +152,15 @@ app.get('/listActivities', ensureAuthenticated, (req, res) => {
     });
   })
 
-
 // Simple route middleware to ensure user is authenticated.
 function ensureAuthenticated(req, res, next) {
   if (req.isAuthenticated()) { return next(); }
-  res.redirect('/auth/strava')
+  // res.redirect('/auth/strava')
+  // If user is NOT authenticated than it goes to connect-strava.html
+  if (!req.isAuthenticated()) {
+    pagePath = path.join(__dirname, '/connect-strava.html');
+    res.sendFile(pagePath);
+  }
 }
 
 app.listen(port, (err) => {
