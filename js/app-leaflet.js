@@ -128,7 +128,7 @@ for (i in activities) {
     if(data.type){
     distancetext = Math.round(data.distance/1000)+" km";
     }
-    let activityinfo = nametext+"<br><hr>"+typetext+" "+distancetext;
+    let activityinfo = nametext+"<br><hr>"+typetext+" "+distancetext+"<br><hr>Click to view on Strava";
 
     if (data.map.coordinates ) {
 
