@@ -107,9 +107,11 @@ app.get('/logout', function(req, res){
   res.redirect('/');
 });
 
-// app.get('/login', function(req, res){
+app.get('/login', function(req, res){
 // res.render('login', { user: req.user });
-// });
+// Redirect to homepage (it will than go to connect-strava.html automatically)
+  res.redirect('/');
+});
 
 app.get('/listActivities', ensureAuthenticated, (req, res) => {
 
