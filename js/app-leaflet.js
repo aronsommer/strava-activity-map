@@ -152,6 +152,9 @@ for (i in activities) {
         // var polyLine = L.polyline(coords,{color:lineColour,opacity:1,weight:3,interactive:true}).addTo(map).bringToBack();
         var polyLine = L.polyline(coords,{color:lineColour,opacity:1,weight:3,interactive:true}).addTo(map);
 
+        // set map view to center of loaded polyLine
+        map.panTo(polyLine.getCenter());
+
         // highlight line on mouseover and show popup
         polyLine.on('mouseover', function(e) {
             this.bringToFront();
