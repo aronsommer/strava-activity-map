@@ -20,7 +20,8 @@ var wanderwege = L.tileLayer.wms('https://wms.geo.admin.ch/', {
 var map = L.map('map', {
     center: [46.8182, 8.2275],
     zoom: 8,
-    layers: [osm, pixelkarteGrau, wanderwege]
+    // layers: [osm, pixelkarteGrau, wanderwege]
+    layers: [osm]
 });
 
 var baseMaps = {
