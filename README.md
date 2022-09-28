@@ -4,7 +4,9 @@ A web app that loads all activities from a user's Strava account and displays th
 Based on this repo: https://github.com/nsynes/ActivityMap
 
 How to deploy your Node.js app to Google Google Cloud:
+
 For Google Cloud set environmental variables (.env file) with an app.yaml file in repo
+
 1. Create a Project in Google Cloud
 2. Create Application in App Engine (navigate to App Engine via the left sidebar)
 3. Open Cloud Shell and clone git repo into home directory of project:
