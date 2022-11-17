@@ -63,153 +63,155 @@ var onLocationError = function(e) {
 }
 */
 
-var getActivities = function(listActivityIDs) {
+var getActivities = function (listActivityIDs) {
     const activityListLength = listActivityIDs.length
     for (var i = 0; i < activityListLength; i++) {
         getActivity(listActivityIDs[i]);
     }
 }
 
-var getAccountInfo = function() {
-    fetch('/userPhoto', {method: 'GET'})
-    .then(function(response) {
-        if(response.ok) {
-            return response.json();
-        }
-        throw new Error('Request failed.');
+var getAccountInfo = function () {
+    fetch('/userPhoto', { method: 'GET' })
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Request failed.');
         })
-    .then(data => {
-        $('#user-image').attr("src", data.photo);
-    })
+        .then(data => {
+            $('#user-image').attr("src", data.photo);
+        })
 }
 
-var getListOfActivities = function(allActivities, timeStamp, perPage, page) {
+var getListOfActivities = function (allActivities, timeStamp, perPage, page) {
 
     var endOfList = false;
-    $('#floating-text').css('display','block');
-    $('#floating-text').text('Loading activities ('+perPage*page+') ...');
+    $('#floating-text').css('display', 'block');
+    $('#floating-text').text('Loading activities (' + perPage * page + ') ...');
 
-    fetch('/listActivities?before='+timeStamp+'&perPage='+perPage+'&page='+page, {method: 'GET'})
-    .then(function(response) {
-        if(response.ok) {
-            return response.json();
-        }
-        throw new Error('Request failed.');
+    fetch('/listActivities?before=' + timeStamp + '&perPage=' + perPage + '&page=' + page, { method: 'GET' })
+        .then(function (response) {
+            if (response.ok) {
+                return response.json();
+            }
+            throw new Error('Request failed.');
         })
-    .then(activities => {
-        page += 1;
-        if ( activities.length < perPage ) {
-            endOfList = true;
-        }
-        displayActivities(activities);
+        .then(activities => {
+            page += 1;
+            if (activities.length < perPage) {
+                endOfList = true;
+            }
+            displayActivities(activities);
 
-        allActivities.push.apply(allActivities, activities);
-        if ( !endOfList ) {
-            getListOfActivities(allActivities, timeStamp, perPage, page);
-        }
-    })
+            allActivities.push.apply(allActivities, activities);
+            if (!endOfList) {
+                getListOfActivities(allActivities, timeStamp, perPage, page);
+            }
+        })
     return allActivities;
 }
 
-var displayActivities = function(activities) {
-for (i in activities) {
-    let data = activities[i];
+var displayActivities = function (activities) {
+    for (i in activities) {
+        let data = activities[i];
 
-    // activityinfo
-    let nametext = '';
-    if(data.name){
-    nametext = data.name;
-    }
-    let typetext = '';
-    if(data.type){
-    typetext = data.type;
-    }
-    let distancetext = '';
-    if(data.type){
-    distancetext = Math.round(data.distance/1000)+" km";
-    }
-    let activityinfo = nametext+"<br><hr>"+typetext+" "+distancetext+"<br><hr>Click to view on Strava";
-
-    if (data.map.coordinates ) {
-
-        var lineColour = "#FF00FF"; //magenta
-
-        /* var lineColour = "#000000"; //black
-        if ( data.type.toLowerCase() === 'hike' || data.type.toLowerCase() === 'walk' ) {
-            lineColour = "#006400"; //green
-        } else if ( data.type.toLowerCase() === 'run' ) {
-            lineColour = "#0000ff"; //blue
-        } else if ( data.type.toLowerCase() === 'ride' ) {
-            lineColour = "#ff0000"; // red
-        } */
-
-        var coords = data.map.coordinates;
-        // lat lon wrong way round
-        for (ii in coords) {
-            coords[ii] = coords[ii].map(function(x) {return [x[1],x[0]]});
+        // activityinfo
+        let nametext = '';
+        if (data.name) {
+            nametext = data.name;
         }
+        let typetext = '';
+        if (data.type) {
+            typetext = data.type;
+        }
+        let distancetext = '';
+        if (data.type) {
+            // distancetext = Math.round(data.distance/1000)+" km";
+            // distancetext = (data.distance/1000).toFixed(2)+" km";
+            distancetext = Math.floor(data.distance.toFixed(2) / 1000 * 100) / 100 + " km";
+        }
+        let activityinfo = nametext + "<br><hr>" + typetext + " " + distancetext + "<br><hr>Click to view on Strava";
 
-        // add line from toUnion array points to map with some basic styling
-        // var polyLine = L.polyline(coords,{color:lineColour,opacity:1,weight:3,interactive:true}).addTo(map).bringToBack();
-        var polyLine = L.polyline(coords,{color:lineColour,opacity:1,weight:3,interactive:true}).addTo(map);
+        if (data.map.coordinates) {
 
-        // set map view to center of loaded polyLine
-        map.panTo(polyLine.getCenter());
+            var lineColour = "#FF00FF"; //magenta
 
-        // highlight line on mouseover and show popup
-        polyLine.on('mouseover', function(e) {
-            this.bringToFront();
-            var layer = e.target;
-            layer.setStyle({
-                color: 'blue',
-                //opacity: 1,
-                weight: 5
+            /* var lineColour = "#000000"; //black
+            if ( data.type.toLowerCase() === 'hike' || data.type.toLowerCase() === 'walk' ) {
+                lineColour = "#006400"; //green
+            } else if ( data.type.toLowerCase() === 'run' ) {
+                lineColour = "#0000ff"; //blue
+            } else if ( data.type.toLowerCase() === 'ride' ) {
+                lineColour = "#ff0000"; // red
+            } */
+
+            var coords = data.map.coordinates;
+            // lat lon wrong way round
+            for (ii in coords) {
+                coords[ii] = coords[ii].map(function (x) { return [x[1], x[0]] });
+            }
+
+            // add line from toUnion array points to map with some basic styling
+            // var polyLine = L.polyline(coords,{color:lineColour,opacity:1,weight:3,interactive:true}).addTo(map).bringToBack();
+            var polyLine = L.polyline(coords, { color: lineColour, opacity: 1, weight: 3, interactive: true }).addTo(map);
+
+            // set map view to center of loaded polyLine
+            map.panTo(polyLine.getCenter());
+
+            // highlight line on mouseover and show popup
+            polyLine.on('mouseover', function (e) {
+                this.bringToFront();
+                var layer = e.target;
+                layer.setStyle({
+                    color: 'blue',
+                    //opacity: 1,
+                    weight: 5
+                });
+                var popup = L.popup()
+                    .setLatLng(e.latlng)
+                    .setContent(activityinfo)
+                    .openOn(map);
             });
-            var popup = L.popup()
-            .setLatLng(e.latlng)
-            .setContent(activityinfo)
-            .openOn(map);
-        });
 
-        polyLine.on('mouseout', function(e) {
-            this.bringToBack();
-            var layer = e.target;
-            layer.setStyle({
-                color: '#FF00FF',
-                //opacity: 1,
-                weight: 3
+            polyLine.on('mouseout', function (e) {
+                this.bringToBack();
+                var layer = e.target;
+                layer.setStyle({
+                    color: '#FF00FF',
+                    //opacity: 1,
+                    weight: 3
+                });
+                map.closePopup();
             });
-            map.closePopup();
-        });
 
-        // open strava activity on click
-        polyLine.on('click', function(e) {
-            this.bringToFront();
-            // Do whatever you want here, when the polygon is clicked.
-            var url = "https://www.strava.com/activities/"+data.id
-            //console.log(url);
-            window.open(url);
-        });
+            // open strava activity on click
+            polyLine.on('click', function (e) {
+                this.bringToFront();
+                // Do whatever you want here, when the polygon is clicked.
+                var url = "https://www.strava.com/activities/" + data.id
+                //console.log(url);
+                window.open(url);
+            });
+        }
     }
-}
-$('#floating-text').css('display','none');
-$('#floating-text').text('');
+    $('#floating-text').css('display', 'none');
+    $('#floating-text').text('');
 }
 
 
 //https://stackoverflow.com/questions/2854407/javascript-jquery-window-resize-how-to-fire-after-the-resize-is-completed
 // for events that can repeatedly fire (like window resize), this function allows waiting until final call
 var waitForFinalEvent = (function () {
-var timers = {};
-return function (callback, ms, uniqueId) {
-    if (!uniqueId) {
-    uniqueId = "Don't call this twice without a uniqueId";
-    }
-    if (timers[uniqueId]) {
-    clearTimeout (timers[uniqueId]);
-    }
-    timers[uniqueId] = setTimeout(callback, ms);
-};
+    var timers = {};
+    return function (callback, ms, uniqueId) {
+        if (!uniqueId) {
+            uniqueId = "Don't call this twice without a uniqueId";
+        }
+        if (timers[uniqueId]) {
+            clearTimeout(timers[uniqueId]);
+        }
+        timers[uniqueId] = setTimeout(callback, ms);
+    };
 })();
 
 
@@ -226,7 +228,7 @@ $('#locate-button').click(function() {
 })
 */
 
-$('#logout-button').click(function() {
+$('#logout-button').click(function () {
     window.location.replace('/logout');
 })
 
