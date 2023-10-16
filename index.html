@@ -149,7 +149,7 @@
             document.getElementById("overlay-content").setAttribute("hidden", true);
         }
 
-        const ListAllAthleteActivities = function (_json, allActivities = [], timeStamp, perPage = 30, page = 1) {
+        const ListAllAthleteActivities = function (_json, allActivities = [], timeStamp, perPage = 200, page = 1) {
             let endOfList = false;
             fetch("https://www.strava.com/api/v3/athlete/activities?" + "page=" + page + "&per_page" + perPage + "&access_token=" + _json.access_token)
                 .then(function (response) {
@@ -167,7 +167,8 @@
                     console.log("Loading activities");
                     document.getElementById("overlay-content").innerHTML = "Loading activities " + allActivities.length;
                     page += 1;
-                    if (activities.length < perPage) {
+                    // if (activities.length < perPage) {
+                    if (activities.length == 0) { // Prefer iterating until an empty page is returned
                         endOfList = true;
                         console.log(allActivities);
                         arrayOfAllActivities = allActivities;
