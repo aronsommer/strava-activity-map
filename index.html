@@ -168,7 +168,8 @@
                     document.getElementById("overlay-content").innerHTML = "Loading activities " + allActivities.length;
                     page += 1;
                     // if (activities.length < perPage) {
-                    if (activities.length == 0) { // Prefer iterating until an empty page is returned
+                    // Prefer iterating until an empty page is returned
+                    if (activities.length == 0) {
                         endOfList = true;
                         console.log(allActivities);
                         arrayOfAllActivities = allActivities;
