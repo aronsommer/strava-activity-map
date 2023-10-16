@@ -1,6 +1,6 @@
 # strava-activity-map
 
-https://activitymap.aronsommer.com/
+https://aronsommer.github.io/strava-activity-map
 
 Example of using the Strava API with pure JavaScript to retrieve all activities of an athlete and display them on a Leaflet map.
 
