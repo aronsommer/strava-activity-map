@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Strava Map</title>
+    <title>Activity Map - All your Strava activities on one map</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
         integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
     <!-- Make sure you put this AFTER Leaflet's CSS -->
@@ -32,7 +32,7 @@
         #overlay-content {
             position: relative;
             top: 10px;
-            width: 60%;
+            width: fit-content;
             height: auto;
             margin: 0 auto;
             padding: 10px;
@@ -63,9 +63,11 @@
 <body>
     <div id="overlay">
         <div id="overlay-content">
-            Welcome to Strava Map<br><br>In order to map your Strava activity data, you need to authorize this
-            application
-            to access your Strava data. Click the button below to go to the Strava website and grant access.<br><br>
+            Welcome to Activity Map<br><br>
+            To map all your Strava activities,<br>
+            you need to authorize this app<br>
+            to access your Strava data.<br><br>Click the button below to<br>go to the Strava website<br>and grant
+            access.<br><br>
             <input type="image" src="btn_strava_connectwith_orange@2x.png" style="width:193px;height:48px;"
                 id="authButton" onclick="Authentication()" alt="Connect with Strava">
         </div>
