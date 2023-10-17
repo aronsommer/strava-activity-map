@@ -57,6 +57,21 @@
             height: 100vh;
             z-index: 1;
         }
+
+        .leaflet-popup-content {
+            color: black;
+            line-height: 1.5;
+        }
+
+        .leaflet-popup-content a:link,
+        a:visited,
+        a:active {
+            text-decoration: none;
+        }
+
+        .leaflet-popup-content a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 
@@ -170,7 +185,7 @@
                     document.getElementById("overlay-content").innerHTML = "Loading activities " + allActivities.length;
                     page += 1;
                     if (activities.length < perPage) {
-                    // if (activities.length == 0) {
+                        // if (activities.length == 0) {
                         endOfList = true;
                         console.log(allActivities);
                         arrayOfAllActivities = allActivities;
@@ -255,7 +270,9 @@
                 if (item.type) { typetext = item.type; }
                 let distancetext = '';
                 if (item.type) { distancetext = Math.floor(item.distance.toFixed(2) / 1000 * 100) / 100 + " km"; }
-                let activityinfo = nametext + "<br><hr>" + typetext + " " + distancetext + "<br><hr>Click to view on Strava";
+                let stravalink = "<a style='color: #FC5200' href='javascript:openStravaLink(" + item.id + ");'>" + item.name + "</a>";
+                let gpxlink = "<a style='color: black' href='javascript:saveGPX(" + item.id + ");'>Download GPX file</a>";
+                let activityinfo = stravalink + "<br>" + typetext + " " + distancetext + "<br>" + gpxlink;
 
                 if (item.map.summary_polyline) {
                     let coordinates = L.Polyline.fromEncoded(item.map.summary_polyline).getLatLngs();
@@ -272,10 +289,10 @@
                             //opacity: 1,
                             weight: 5
                         });
-                        let popup = L.popup()
-                            .setLatLng(e.latlng)
-                            .setContent(activityinfo)
-                            .openOn(map);
+                        // let popup = L.popup()
+                        //     .setLatLng(e.latlng)
+                        //     .setContent(activityinfo)
+                        //     .openOn(map);
                     });
 
                     // Close popup on mouseout
@@ -287,17 +304,41 @@
                             //opacity: 1,
                             weight: 3
                         });
-                        map.closePopup();
+                        // map.closePopup();
                     });
 
                     // Open strava activity on click
+                    // polyLine.on('click', function (e) {
+                    //     this.bringToFront();
+                    //     let url = "https://www.strava.com/activities/" + item.id
+                    //     window.open(url);
+                    // });
+
+                    // Open popup on click
                     polyLine.on('click', function (e) {
-                        this.bringToFront();
-                        let url = "https://www.strava.com/activities/" + item.id
-                        window.open(url);
+                        let popup = L.popup()
+                            .setLatLng(e.latlng)
+                            .setContent(activityinfo)
+                            .openOn(map);
                     });
                 }
             });
+        }
+
+        function openStravaLink(_id) {
+            let url = "https://www.strava.com/activities/" + _id;
+            window.open(url);
+        }
+
+        function saveGPX(_id) {
+            let a = document.createElement('a');
+            a.download = _id + '.gpx';
+            a.href = "https://www.strava.com/activities/" + _id + "/export_gpx";
+            a.id = _id;
+            document.body.appendChild(a);
+            a.click();
+            // document.querySelector('#' + a.id).remove();
+            document.getElementById(a.id).remove();
         }
 
         let arrayOfAllActivities = [];
