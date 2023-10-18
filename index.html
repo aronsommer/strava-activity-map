@@ -263,16 +263,11 @@
 
         function AddPolylinesToMap(_json) {
             _json.forEach(function (item, index) {
-                // Activityinfo
-                let nametext = '';
-                if (item.name) { nametext = item.name; }
-                let typetext = '';
-                if (item.type) { typetext = item.type; }
-                let distancetext = '';
-                if (item.type) { distancetext = Math.floor(item.distance.toFixed(2) / 1000 * 100) / 100 + " km"; }
+                // Activity info
+                let distancetext = Math.floor(item.distance.toFixed(2) / 1000 * 100) / 100 + " km";
                 let stravalink = "<a style='color: #FC5200' href='javascript:openStravaLink(" + item.id + ");'>" + item.name + "</a>";
                 let gpxlink = "<a style='color: black' href='javascript:saveGPX(" + item.id + ");'>Download GPX file</a>";
-                let activityinfo = stravalink + "<br>" + typetext + " " + distancetext + "<br>" + gpxlink;
+                let activityinfo = stravalink + "<br>" + item.type + " " + distancetext + "<br>" + gpxlink;
 
                 if (item.map.summary_polyline) {
                     let coordinates = L.Polyline.fromEncoded(item.map.summary_polyline).getLatLngs();
@@ -280,7 +275,7 @@
                     // Set map view to center of loaded polyLine
                     map.panTo(polyLine.getCenter());
 
-                    // Highlight line on mouseover and show popup
+                    // Highlight line on mouseover
                     polyLine.on('mouseover', function (e) {
                         this.bringToFront();
                         let layer = e.target;
@@ -295,7 +290,7 @@
                         //     .openOn(map);
                     });
 
-                    // Close popup on mouseout
+                    // Unhighlight line on mouseout
                     polyLine.on('mouseout', function (e) {
                         this.bringToBack();
                         let layer = e.target;
@@ -307,13 +302,6 @@
                         // map.closePopup();
                     });
 
-                    // Open strava activity on click
-                    // polyLine.on('click', function (e) {
-                    //     this.bringToFront();
-                    //     let url = "https://www.strava.com/activities/" + item.id
-                    //     window.open(url);
-                    // });
-
                     // Open popup on click
                     polyLine.on('click', function (e) {
                         let popup = L.popup()
@@ -321,6 +309,13 @@
                             .setContent(activityinfo)
                             .openOn(map);
                     });
+
+                    // Open strava activity on click
+                    // polyLine.on('click', function (e) {
+                    //     this.bringToFront();
+                    //     let url = "https://www.strava.com/activities/" + item.id
+                    //     window.open(url);
+                    // });
                 }
             });
         }
