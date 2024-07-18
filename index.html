@@ -167,10 +167,10 @@
                 .then(json => AddPolylinesToMap(json))
             document.getElementById("overlay-content").setAttribute("hidden", true);
         }
-
-        let endOfList = false;
+        
         // Calling this function once counts as one request to the Strava API
-        const ListAllAthleteActivities = function (_json, allActivities = [], timeStamp, perPage = 30, page = 1) {            
+        const ListAllAthleteActivities = function (_json, allActivities = [], timeStamp, perPage = 30, page = 1) {
+            let endOfList = false;    
             fetch("https://www.strava.com/api/v3/athlete/activities?" + "page=" + page + "&per_page" + perPage + "&access_token=" + _json.access_token)
                 .then(function (response) {
                     if (response.ok) {
@@ -198,6 +198,8 @@
                         // Add layer control and zoom buttons to map
                         layerControl.addTo(map);
                         L.control.zoom({ position: 'topleft' }).addTo(map);
+                        // When all polyLines are loaded fit view to polyLineGroup
+                        map.fitBounds(polyLineGroup.getBounds());
                     }
                     if (!endOfList) {
                         ListAllAthleteActivities(_json, allActivities, timeStamp, perPage, page);
@@ -327,11 +329,7 @@
                     //     window.open(url);
                     // });
                 }
-            });
-            // When all polyLines are loaded fit view to polyLineGroup
-            if (endOfList){
-            map.fitBounds(polyLineGroup.getBounds());
-            }
+            });            
         }
 
         function openStravaLink(_id) {
