@@ -265,6 +265,8 @@
             layerControl = L.control.layers(baseMaps, overlayMaps);
         }
 
+        let polyLineGroup = new L.featureGroup();
+
         function AddPolylinesToMap(_json) {
             _json.forEach(function (item, index) {
                 // Activity info
@@ -276,6 +278,10 @@
                 if (item.map.summary_polyline) {
                     let coordinates = L.Polyline.fromEncoded(item.map.summary_polyline).getLatLngs();
                     let polyLine = L.polyline(coordinates, { color: "#FF00FF", opacity: 1, weight: 3, interactive: true }).addTo(map);
+
+                    // Add polyLine to polyLineGroup
+                    polyLine.addTo(polyLineGroup);
+
                     // Set map view to center of loaded polyLine
                     map.panTo(polyLine.getCenter());
 
@@ -322,6 +328,8 @@
                     // });
                 }
             });
+            // When all polyLines are loaded fit view to polyLineGroup
+            map.fitBounds(polyLineGroup.getBounds());
         }
 
         function openStravaLink(_id) {
