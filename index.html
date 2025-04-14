@@ -1,377 +1,428 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Aron Sommer">
-    <meta name="description" content="This app lets you see all your Strava activities on one map">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="author" content="Aron Sommer" />
+    <meta
+      name="description"
+      content="This app lets you see all your Strava activities on one map"
+    />
     <title>Activity Map - All your Strava activities on one map</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
     <!-- Make sure you put this AFTER Leaflet's CSS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
     <script src="Polyline.encoded.js"></script>
+    <link rel="stylesheet" href="L.Control.Locate.min.css" />
+    <script src="L.Control.Locate.min.js" charset="utf-8"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
+      * {
+        margin: 0;
+        padding: 0;
+      }
 
-        #overlay {
-            position: absolute;
-            width: 100%;
-            /* Set height to 0 otherwise you can not drag map */
-            height: 0;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-            /* background-color: blue; */
-            z-index: 1000;
-        }
+      #overlay {
+        position: absolute;
+        width: 100%;
+        /* Set height to 0 otherwise you can not drag map */
+        height: 0;
+        margin: 0;
+        padding: 0;
+        text-align: center;
+        /* background-color: blue; */
+        z-index: 1000;
+      }
 
-        #overlay-content {
-            position: relative;
-            top: 10px;
-            width: fit-content;
-            height: auto;
-            margin: 0 auto;
-            padding: 10px;
-            text-align: center;
-            font-family: Arial, Helvetica, sans-serif;
-            font-size: 20px;
-            color: black;
-            border-radius: 25px;
-            background-color: white;
-            z-index: 1000;
-        }
+      #overlay-content {
+        position: relative;
+        top: 10px;
+        width: fit-content;
+        height: auto;
+        margin: 0 auto;
+        padding: 10px;
+        text-align: center;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 20px;
+        color: black;
+        border-radius: 25px;
+        background-color: white;
+        z-index: 1000;
+      }
 
-        #downloadBtnDiv {
-            position: absolute;
-            bottom: 10px;
-            left: 10px;
-            z-index: 1000;
-        }
+      #downloadBtnDiv {
+        position: absolute;
+        bottom: 10px;
+        left: 10px;
+        z-index: 1000;
+      }
 
-        #map {
-            width: 100%;
-            height: 100vh;
-            z-index: 1;
-        }
+      #map {
+        width: 100%;
+        height: 100vh;
+        z-index: 1;
+      }
 
-        .leaflet-popup-content {
-            color: black;
-            line-height: 1.5;
-        }
+      .leaflet-popup-content {
+        color: black;
+        line-height: 1.5;
+      }
 
-        .leaflet-popup-content a:link,
-        a:visited,
-        a:active {
-            text-decoration: none;
-        }
+      .leaflet-popup-content a:link,
+      a:visited,
+      a:active {
+        text-decoration: none;
+      }
 
-        .leaflet-popup-content a:hover {
-            text-decoration: underline;
-        }
+      .leaflet-popup-content a:hover {
+        text-decoration: underline;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div id="overlay">
-        <div id="overlay-content">
-            Welcome to Activity Map<br><br>
-            This app lets you see all your<br>
-            Strava activities on one map.<br><br>
-            To map your Strava activities,<br>
-            you need to authorize this app<br>
-            to access your Strava data.<br><br>Click the button below to<br>go to the Strava website<br>and grant
-            access.<br><br>
-            <input type="image" src="btn_strava_connectwith_orange@2x.png" style="width:193px;height:48px;"
-                id="authButton" onclick="Authentication()" alt="Connect with Strava">
-        </div>
+      <div id="overlay-content">
+        Welcome to Activity Map<br /><br />
+        This app lets you see all your<br />
+        Strava activities on one map.<br /><br />
+        To map your Strava activities,<br />
+        you need to authorize this app<br />
+        to access your Strava data.<br /><br />Click the button below to<br />go to the Strava
+        website<br />and grant access.<br /><br />
+        <input
+          type="image"
+          src="btn_strava_connectwith_orange@2x.png"
+          style="width: 193px; height: 48px"
+          id="authButton"
+          onclick="Authentication()"
+          alt="Connect with Strava"
+        />
+      </div>
     </div>
     <div id="downloadBtnDiv" hidden="hidden">
-        <button id="downloadBtn" onclick="saveJSON(arrayOfAllActivities, 'allActivities');">Download JSON</button>
+      <button id="downloadBtn" onclick="saveJSON(arrayOfAllActivities, 'allActivities');">
+        Download JSON
+      </button>
     </div>
     <div id="map"></div>
 
     <script>
-        // The DOMContentLoaded event fires when the HTML document has been completely parsed
-        document.addEventListener("DOMContentLoaded", (event) => {
-            console.log("DOM fully loaded and parsed");
-            Start();
+      // The DOMContentLoaded event fires when the HTML document has been completely parsed
+      document.addEventListener("DOMContentLoaded", (event) => {
+        console.log("DOM fully loaded and parsed");
+        Start();
+      });
+
+      const clientID = "92180";
+      const clientSecret = "548c3e8dbfec4eac3ee1e40c70567a84e756c872";
+      // const redirectURI = "http://localhost:8000/"
+      const redirectURI = "https://activitymap.aronsommer.com/";
+
+      function Start() {
+        // Check if URL has code parameter
+        const queryString = window.location.search;
+        console.log("URL query string: " + queryString);
+        const urlParams = new URLSearchParams(queryString);
+        console.log("URL has code parameter: " + urlParams.has("code"));
+        // If URL has code parameter
+        if (urlParams.has("code")) {
+          const authorizationCode = urlParams.get("code");
+          console.log("Authorization code: " + authorizationCode);
+          ExchangeAuthorizationCode(authorizationCode);
+          SettingUpTheMap();
+        }
+      }
+
+      function Authentication() {
+        // Open auth url with client id of my api app and redirect uri (Authorization Callback Domain)
+        const authURL =
+          "http://www.strava.com/oauth/authorize?client_id=" +
+          clientID +
+          "&response_type=code&redirect_uri=" +
+          redirectURI +
+          "&approval_prompt=force&scope=activity:read";
+        window.open(authURL, "_self");
+      }
+
+      function ExchangeAuthorizationCode(authCode) {
+        console.log("Exchange authorization code");
+        document.getElementById("overlay-content").style.width = "fit-content";
+        document.getElementById("overlay-content").innerHTML = "Exchange authorization code";
+        // Make HTTP request to exchange the authorization code and scope for a refresh token, access token, and access token expiration date
+        fetch("https://www.strava.com/oauth/token", {
+          method: "POST",
+          body: JSON.stringify({
+            client_id: clientID,
+            client_secret: clientSecret,
+            code: authCode,
+            grant_type: "authorization_code",
+          }),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8",
+          },
+        })
+          .then((response) => response.json())
+          // .then((json) => console.log(json))
+          // .then((json) => GetAuthenticatedAthlete(json))
+          // .then((json) => ListAthleteActivities(json))
+          .then((json) => ListAllAthleteActivities(json));
+      }
+
+      function GetAuthenticatedAthlete(_json) {
+        console.log("Access token: " + _json.access_token);
+        fetch("https://www.strava.com/api/v3/athlete?access_token=" + _json.access_token)
+          .then((response) => response.json())
+          .then((json) => console.log(json));
+      }
+
+      function ListAthleteActivities(_json) {
+        fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + _json.access_token)
+          .then((response) => response.json())
+          // .then((json) => console.log(json))
+          .then((json) => AddPolylinesToMap(json));
+        document.getElementById("overlay-content").setAttribute("hidden", true);
+      }
+
+      // Calling this function once counts as one request to the Strava API
+      const ListAllAthleteActivities = function (
+        _json,
+        allActivities = [],
+        timeStamp,
+        perPage = 30,
+        page = 1
+      ) {
+        let endOfList = false;
+        fetch(
+          "https://www.strava.com/api/v3/athlete/activities?" +
+            "page=" +
+            page +
+            "&per_page" +
+            perPage +
+            "&access_token=" +
+            _json.access_token
+        )
+          .then(function (response) {
+            if (response.ok) {
+              return response.json();
+            }
+            if (!response.ok) {
+              document.getElementById("overlay-content").innerHTML =
+                "Request failed: " + response.status;
+              throw new Error("Request failed: " + response.status);
+            }
+          })
+          .then((activities) => {
+            allActivities.push.apply(allActivities, activities);
+            AddPolylinesToMap(activities);
+            console.log("Loaded activities");
+            // console.log(activities);
+            document.getElementById("overlay-content").innerHTML =
+              "Loading activities " + allActivities.length;
+            page += 1;
+            if (activities.length < perPage) {
+              // if (activities.length == 0) {
+              endOfList = true;
+              console.log(allActivities);
+              arrayOfAllActivities = allActivities;
+              document.getElementById("overlay-content").setAttribute("hidden", true);
+              document.getElementById("downloadBtnDiv").removeAttribute("hidden");
+              // Add layer control, zoom and locate buttons to map
+              layerControl.addTo(map);
+              L.control.zoom({ position: "topleft" }).addTo(map);
+              L.control.locate().addTo(map);
+              // When all polyLines are loaded fit view to polyLineGroup
+              map.fitBounds(polyLineGroup.getBounds());
+            }
+            if (!endOfList) {
+              ListAllAthleteActivities(_json, allActivities, timeStamp, perPage, page);
+            }
+          });
+        return allActivities;
+      };
+
+      let map;
+      let layerControl;
+
+      function SettingUpTheMap() {
+        // Base maps
+        let osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+          maxZoom: 19,
+          attribution: "© OpenStreetMap",
         });
 
-        const clientID = "92180";
-        const clientSecret = "548c3e8dbfec4eac3ee1e40c70567a84e756c872";
-        // const redirectURI = "http://localhost:8000/"
-        const redirectURI = "https://activitymap.aronsommer.com/"
+        let pixelkarteFarbe = L.tileLayer.wms("https://wms.geo.admin.ch/", {
+          layers: "ch.swisstopo.pixelkarte-farbe",
+          format: "image/jpeg",
+          detectRetina: true,
+          attribution: "© swisstopo",
+        });
 
-        function Start() {
-            // Check if URL has code parameter
-            const queryString = window.location.search;
-            console.log("URL query string: " + queryString);
-            const urlParams = new URLSearchParams(queryString);
-            console.log("URL has code parameter: " + urlParams.has('code'));
-            // If URL has code parameter
-            if (urlParams.has('code')) {
-                const authorizationCode = urlParams.get('code');
-                console.log("Authorization code: " + authorizationCode);
-                ExchangeAuthorizationCode(authorizationCode);
-                SettingUpTheMap();
-            }
-        }
+        let pixelkarteGrau = L.tileLayer.wms("https://wms.geo.admin.ch/", {
+          layers: "ch.swisstopo.pixelkarte-grau",
+          format: "image/jpeg",
+          detectRetina: true,
+          attribution: "© swisstopo",
+        });
 
-        function Authentication() {
-            // Open auth url with client id of my api app and redirect uri (Authorization Callback Domain)
-            const authURL = "http://www.strava.com/oauth/authorize?client_id=" + clientID + "&response_type=code&redirect_uri=" + redirectURI + "&approval_prompt=force&scope=activity:read";
-            window.open(authURL, "_self");
-        }
+        let swissImage = L.tileLayer.wms("https://wms.geo.admin.ch/", {
+          layers: "ch.swisstopo.swissimage",
+          format: "image/jpeg",
+          detectRetina: true,
+          attribution: "© swisstopo",
+        });
 
-        function ExchangeAuthorizationCode(authCode) {
-            console.log("Exchange authorization code");
-            document.getElementById("overlay-content").style.width = "fit-content";
-            document.getElementById("overlay-content").innerHTML = "Exchange authorization code";
-            // Make HTTP request to exchange the authorization code and scope for a refresh token, access token, and access token expiration date
-            fetch("https://www.strava.com/oauth/token", {
-                method: "POST",
-                body: JSON.stringify({
-                    client_id: clientID,
-                    client_secret: clientSecret,
-                    code: authCode,
-                    grant_type: "authorization_code"
-                }),
-                headers: {
-                    "Content-type": "application/json; charset=UTF-8"
-                }
-            })
-                .then((response) => response.json())
-                // .then((json) => console.log(json))
-                // .then((json) => GetAuthenticatedAthlete(json))
-                // .then((json) => ListAthleteActivities(json))
-                .then((json) => ListAllAthleteActivities(json))
-        }
+        // Overlay maps
+        let wanderwege = L.tileLayer.wms("https://wms.geo.admin.ch/", {
+          layers: "ch.swisstopo.swisstlm3d-wanderwege",
+          format: "image/png",
+          transparent: true,
+        });
 
-        function GetAuthenticatedAthlete(_json) {
-            console.log("Access token: " + _json.access_token);
-            fetch("https://www.strava.com/api/v3/athlete?access_token=" + _json.access_token)
-                .then((response) => response.json())
-                .then((json) => console.log(json))
-        }
+        map = L.map("map", {
+          center: [46.8182, 8.2275],
+          zoom: 8,
+          layers: [osm],
+          zoomControl: false,
+        });
 
-        function ListAthleteActivities(_json) {
-            fetch("https://www.strava.com/api/v3/athlete/activities?access_token=" + _json.access_token)
-                .then((response) => response.json())
-                // .then((json) => console.log(json))
-                .then(json => AddPolylinesToMap(json))
-            document.getElementById("overlay-content").setAttribute("hidden", true);
-        }
-        
-        // Calling this function once counts as one request to the Strava API
-        const ListAllAthleteActivities = function (_json, allActivities = [], timeStamp, perPage = 30, page = 1) {
-            let endOfList = false;    
-            fetch("https://www.strava.com/api/v3/athlete/activities?" + "page=" + page + "&per_page" + perPage + "&access_token=" + _json.access_token)
-                .then(function (response) {
-                    if (response.ok) {
-                        return response.json();
-                    }
-                    if (!response.ok) {
-                        document.getElementById("overlay-content").innerHTML = "Request failed: " + response.status;
-                        throw new Error("Request failed: " + response.status);
-                    }
-                })
-                .then(activities => {
-                    allActivities.push.apply(allActivities, activities);
-                    AddPolylinesToMap(activities);
-                    console.log("Loaded activities");
-                    // console.log(activities);
-                    document.getElementById("overlay-content").innerHTML = "Loading activities " + allActivities.length;
-                    page += 1;
-                    if (activities.length < perPage) {
-                        // if (activities.length == 0) {
-                        endOfList = true;
-                        console.log(allActivities);
-                        arrayOfAllActivities = allActivities;
-                        document.getElementById("overlay-content").setAttribute("hidden", true);
-                        document.getElementById("downloadBtnDiv").removeAttribute("hidden");
-                        // Add layer control and zoom buttons to map
-                        layerControl.addTo(map);
-                        L.control.zoom({ position: 'topleft' }).addTo(map);
-                        // When all polyLines are loaded fit view to polyLineGroup
-                        map.fitBounds(polyLineGroup.getBounds());
-                    }
-                    if (!endOfList) {
-                        ListAllAthleteActivities(_json, allActivities, timeStamp, perPage, page);
-                    }
-                })
-            return allActivities;
-        }
+        let baseMaps = {
+          OpenStreetMap: osm,
+          "Swisstopo color map": pixelkarteFarbe,
+          "Swisstopo grey map": pixelkarteGrau,
+          "Swisstopo aerial imagery": swissImage,
+        };
 
-        let map;
-        let layerControl;
+        let overlayMaps = {
+          "Swiss hiking trails": wanderwege,
+        };
 
-        function SettingUpTheMap() {
-            // Base maps
-            let osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                maxZoom: 19,
-                attribution: '© OpenStreetMap'
+        layerControl = L.control.layers(baseMaps, overlayMaps);
+      }
+
+      let polyLineGroup = new L.featureGroup();
+
+      function AddPolylinesToMap(_json) {
+        _json.forEach(function (item, index) {
+          // Activity info
+          let distancetext = Math.floor((item.distance.toFixed(2) / 1000) * 100) / 100 + " km";
+          let stravalink =
+            "<a style='color: #FC5200' href='javascript:openStravaLink(" +
+            item.id +
+            ");'>" +
+            item.name +
+            "</a>";
+          let gpxlink =
+            "<a style='color: black' href='javascript:saveGPX(" +
+            item.id +
+            ");'>Download GPX file</a>";
+          let activityinfo =
+            stravalink + "<br>" + item.type + " " + distancetext + "<br>" + gpxlink;
+
+          if (item.map.summary_polyline) {
+            let coordinates = L.Polyline.fromEncoded(item.map.summary_polyline).getLatLngs();
+            let polyLine = L.polyline(coordinates, {
+              color: "#FF00FF",
+              opacity: 1,
+              weight: 3,
+              interactive: true,
+            }).addTo(map);
+
+            // Add polyLine to polyLineGroup
+            polyLine.addTo(polyLineGroup);
+
+            // Set map view to center of loaded polyLine
+            map.panTo(polyLine.getCenter());
+
+            // Highlight line on mouseover
+            polyLine.on("mouseover", function (e) {
+              this.bringToFront();
+              let layer = e.target;
+              layer.setStyle({
+                color: "blue",
+                //opacity: 1,
+                weight: 5,
+              });
+              // let popup = L.popup()
+              //     .setLatLng(e.latlng)
+              //     .setContent(activityinfo)
+              //     .openOn(map);
             });
 
-            let pixelkarteFarbe = L.tileLayer.wms('https://wms.geo.admin.ch/', {
-                layers: 'ch.swisstopo.pixelkarte-farbe',
-                format: 'image/jpeg',
-                detectRetina: true,
-                attribution: '© swisstopo'
+            // Unhighlight line on mouseout
+            polyLine.on("mouseout", function (e) {
+              this.bringToBack();
+              let layer = e.target;
+              layer.setStyle({
+                color: "#FF00FF",
+                //opacity: 1,
+                weight: 3,
+              });
+              // map.closePopup();
             });
 
-            let pixelkarteGrau = L.tileLayer.wms('https://wms.geo.admin.ch/', {
-                layers: 'ch.swisstopo.pixelkarte-grau',
-                format: 'image/jpeg',
-                detectRetina: true,
-                attribution: '© swisstopo'
+            // Open popup on click
+            polyLine.on("click", function (e) {
+              let popup = L.popup().setLatLng(e.latlng).setContent(activityinfo).openOn(map);
             });
 
-            let swissImage = L.tileLayer.wms('https://wms.geo.admin.ch/', {
-                layers: 'ch.swisstopo.swissimage',
-                format: 'image/jpeg',
-                detectRetina: true,
-                attribution: '© swisstopo'
-            });
+            // Open strava activity on click
+            // polyLine.on('click', function (e) {
+            //     this.bringToFront();
+            //     let url = "https://www.strava.com/activities/" + item.id
+            //     window.open(url);
+            // });
+          }
+        });
+      }
 
-            // Overlay maps
-            let wanderwege = L.tileLayer.wms('https://wms.geo.admin.ch/', {
-                layers: 'ch.swisstopo.swisstlm3d-wanderwege',
-                format: 'image/png',
-                transparent: true
-            });
+      function openStravaLink(_id) {
+        let url = "https://www.strava.com/activities/" + _id;
+        window.open(url);
+      }
 
-            map = L.map('map', {
-                center: [46.8182, 8.2275],
-                zoom: 8,
-                layers: [osm],
-                zoomControl: false
-            });
+      function saveGPX(_id) {
+        let a = document.createElement("a");
+        a.download = _id + ".gpx";
+        a.href = "https://www.strava.com/activities/" + _id + "/export_gpx";
+        a.id = _id;
+        document.body.appendChild(a);
+        a.click();
+        // document.querySelector('#' + a.id).remove();
+        document.getElementById(a.id).remove();
+      }
 
-            let baseMaps = {
-                "OpenStreetMap": osm,
-                "Swisstopo color map": pixelkarteFarbe,
-                "Swisstopo grey map": pixelkarteGrau,
-                "Swisstopo aerial imagery": swissImage
-            };
+      let arrayOfAllActivities = [];
 
-            let overlayMaps = {
-                "Swiss hiking trails": wanderwege
-            };
+      function saveJSON(data, saveAs) {
+        let stringified = JSON.stringify(data, null, 2);
+        let blob = new Blob([stringified], { type: "application/json" });
+        let url = URL.createObjectURL(blob);
 
-            layerControl = L.control.layers(baseMaps, overlayMaps);
-        }
+        let a = document.createElement("a");
+        a.download = saveAs + ".json";
+        a.href = url;
+        a.id = saveAs;
+        document.body.appendChild(a);
+        a.click();
+        document.querySelector("#" + a.id).remove();
+      }
 
-        let polyLineGroup = new L.featureGroup();
-
-        function AddPolylinesToMap(_json) {
-            _json.forEach(function (item, index) {
-                // Activity info
-                let distancetext = Math.floor(item.distance.toFixed(2) / 1000 * 100) / 100 + " km";
-                let stravalink = "<a style='color: #FC5200' href='javascript:openStravaLink(" + item.id + ");'>" + item.name + "</a>";
-                let gpxlink = "<a style='color: black' href='javascript:saveGPX(" + item.id + ");'>Download GPX file</a>";
-                let activityinfo = stravalink + "<br>" + item.type + " " + distancetext + "<br>" + gpxlink;
-
-                if (item.map.summary_polyline) {
-                    let coordinates = L.Polyline.fromEncoded(item.map.summary_polyline).getLatLngs();
-                    let polyLine = L.polyline(coordinates, { color: "#FF00FF", opacity: 1, weight: 3, interactive: true }).addTo(map);
-
-                    // Add polyLine to polyLineGroup
-                    polyLine.addTo(polyLineGroup);
-
-                    // Set map view to center of loaded polyLine
-                    map.panTo(polyLine.getCenter());
-
-                    // Highlight line on mouseover
-                    polyLine.on('mouseover', function (e) {
-                        this.bringToFront();
-                        let layer = e.target;
-                        layer.setStyle({
-                            color: 'blue',
-                            //opacity: 1,
-                            weight: 5
-                        });
-                        // let popup = L.popup()
-                        //     .setLatLng(e.latlng)
-                        //     .setContent(activityinfo)
-                        //     .openOn(map);
-                    });
-
-                    // Unhighlight line on mouseout
-                    polyLine.on('mouseout', function (e) {
-                        this.bringToBack();
-                        let layer = e.target;
-                        layer.setStyle({
-                            color: '#FF00FF',
-                            //opacity: 1,
-                            weight: 3
-                        });
-                        // map.closePopup();
-                    });
-
-                    // Open popup on click
-                    polyLine.on('click', function (e) {
-                        let popup = L.popup()
-                            .setLatLng(e.latlng)
-                            .setContent(activityinfo)
-                            .openOn(map);
-                    });
-
-                    // Open strava activity on click
-                    // polyLine.on('click', function (e) {
-                    //     this.bringToFront();
-                    //     let url = "https://www.strava.com/activities/" + item.id
-                    //     window.open(url);
-                    // });
-                }
-            });            
-        }
-
-        function openStravaLink(_id) {
-            let url = "https://www.strava.com/activities/" + _id;
-            window.open(url);
-        }
-
-        function saveGPX(_id) {
-            let a = document.createElement('a');
-            a.download = _id + '.gpx';
-            a.href = "https://www.strava.com/activities/" + _id + "/export_gpx";
-            a.id = _id;
-            document.body.appendChild(a);
-            a.click();
-            // document.querySelector('#' + a.id).remove();
-            document.getElementById(a.id).remove();
-        }
-
-        let arrayOfAllActivities = [];
-
-        function saveJSON(data, saveAs) {
-            let stringified = JSON.stringify(data, null, 2);
-            let blob = new Blob([stringified], { type: "application/json" });
-            let url = URL.createObjectURL(blob);
-
-            let a = document.createElement('a');
-            a.download = saveAs + '.json';
-            a.href = url;
-            a.id = saveAs;
-            document.body.appendChild(a);
-            a.click();
-            document.querySelector('#' + a.id).remove();
-        }
-
-        function readJSON() {
-            fetch("./allActivities.json")
-                .then((res) => {
-                    return res.json();
-                })
-                .then((data) => console.log(data));
-        }
+      function readJSON() {
+        fetch("./allActivities.json")
+          .then((res) => {
+            return res.json();
+          })
+          .then((data) => console.log(data));
+      }
     </script>
-</body>
-
+  </body>
 </html>
